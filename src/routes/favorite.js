@@ -1,13 +1,14 @@
 const express = require("express");
 const router = express.Router();
-const favoriteController = require("../controllers/favorite");
+const FavoriteController = require("../controllers/favorite");
 
 // Save Movie
-router.post("/movie", favoriteController.saveMovies);
+router.post("/movie", FavoriteController.saveMovies);
 
-// gell all favorit films base on userId
-router.get("/movie/:userId", favoriteController.getAllFavorite);
+// Get all favorit films base on userId
+router.get("/movie/:userId", FavoriteController.getAllFavorite);
 
-// delete
-router.delete("/movie/:id", favoriteController.deleteFavorite);
+// Delete
+router.delete("/movie/:id", FavoriteController.deleteFavorite);
+
 module.exports = router;

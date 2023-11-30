@@ -1,5 +1,4 @@
 const express = require("express");
-const app = express();
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const dotenv = require("dotenv");
@@ -11,33 +10,56 @@ const userRoutes = require("./src/routes/user");
 const favoriteRoutes = require("./src/routes/favorite");
 
 dotenv.config();
-app.use(bodyParser.json());
-app.use(express.json());
-// allow access
-const corsOptions = {
-  origin: ["http://localhost:5173", "http://localhost:5174"],
-  credentials: true,
-};
 
-app.use(cors(corsOptions));
+class Database {
+  constructor() {
+    // Set up MongoDB connection
+    mongoose.set("strictQuery", false);
+    mongoose
+      .connect(process.env.MONGO_URL)
+      .then(() => console.log("Connected to mongoose"))
+      .catch((err) => console.log(err));
+  }
+}
 
-app.use(cookieParser());
+class App extends Database {
+  constructor() {
+    super();
+    this._app = express();
+    this._setupMiddlewares(); // Set up Express middleware
+    this._setupRoutes(); // Set up Express routing
+    this._startServer(); // Start Express server
+  }
 
-// Handle Error mongodb
-mongoose.set("strictQuery", false);
-// Connect mongodb
-mongoose
-  .connect(process.env.MONGO_URL)
-  .then(console.log("Connected to mongoose"))
-  .catch((err) => console.log(err));
+  _setupMiddlewares() {
+    this._app.use(bodyParser.json());
+    this._app.use(express.json());
 
-// menggunakan grouping
-app.use("/watch", watchRoutes);
-app.use("/auth", authRoutes);
-app.use("/user", userRoutes);
-app.use("/favorite", favoriteRoutes);
-// start server
-const PORT = process.env.PORT || 4000;
-app.listen(PORT, () => {
-  console.log("Backend movie is running in port " + PORT);
-});
+    const corsOptions = {
+      origin: ["https://kalijaga-screen.netlify.app/", "http://localhost:5173", "http://localhost:5174"],
+      credentials: true,
+    };
+
+    this._app.use(cors(corsOptions));
+    this._app.use(cookieParser());
+  }
+
+  _setupRoutes() {
+    // Express routes
+    this._app.use("/watch", watchRoutes);
+    this._app.use("/auth", authRoutes);
+    this._app.use("/user", userRoutes);
+    this._app.use("/favorite", favoriteRoutes);
+  }
+
+  _startServer() {
+    // Start
+    const PORT = process.env.PORT || 4000;
+    this._app.listen(PORT, () => {
+      console.log("Backend movie is running in port " + PORT);
+    });
+  }
+}
+
+// Create an instance of the App class to start the application
+const myApp = new App();

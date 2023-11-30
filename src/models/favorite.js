@@ -1,7 +1,34 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-const Favorite = new Schema(
+class FavoriteModel {
+  constructor(movieId, userId) {
+    this.movieId = movieId;
+    this.userId = userId;
+  }
+
+  // Getter for movieId
+  getMovieId() {
+    return this.movieId;
+  }
+
+  // Setter for movieId
+  setMovieId(movieId) {
+    this.movieId = movieId;
+  }
+
+  // Getter for userId
+  getUserId() {
+    return this.userId;
+  }
+
+  // Setter for userId
+  setUserId(userId) {
+    this.userId = userId;
+  }
+}
+
+const FavoriteSchema = new Schema(
   {
     movieId: {
       type: Schema.Types.ObjectId,
@@ -16,4 +43,5 @@ const Favorite = new Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model("Favorite", Favorite);
+module.exports = mongoose.model("Favorite", FavoriteSchema);
+module.exports.FavoriteModel = FavoriteModel;

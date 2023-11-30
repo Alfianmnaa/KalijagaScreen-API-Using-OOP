@@ -1,7 +1,18 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-const Movies = new Schema(
+class Movie {
+  constructor(movieData) {
+    this.moviesName = movieData.moviesName;
+    this.duration = movieData.duration;
+    this.posterMovie = movieData.posterMovie;
+    this.urlMovie = movieData.urlMovie;
+    this.genre = movieData.genre;
+    this.desc = movieData.desc;
+  }
+}
+
+const MovieSchema = new Schema(
   {
     moviesName: {
       type: String,
@@ -33,4 +44,4 @@ const Movies = new Schema(
   }
 );
 
-module.exports = mongoose.model("Movies", Movies);
+module.exports = mongoose.model("Movies", MovieSchema);
